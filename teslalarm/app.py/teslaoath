@@ -1,0 +1,45 @@
+from flask import Flask, redirect, request, session
+import requests
+
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'
+
+TESLA_CLIENT_ID = 'your_tesla_client_id'
+TESLA_CLIENT_SECRET = 'your_tesla_client_secret'
+TESLA_OAUTH_URL = 'https://auth.tesla.com/oauth2/v3/authorize'
+TESLA_TOKEN_URL = 'https://auth.tesla.com/oauth2/v3/token'
+
+@app.route('/auth/tesla')
+def login_with_tesla():
+    # Redirect the user to Tesla's OAuth authorization URL
+    tesla_auth_url = f"{TESLA_OAUTH_URL}?response_type=code&client_id={TESLA_CLIENT_ID}&redirect_uri=http://localhost:5000/auth/tesla/callback&scope=openid email offline_access"
+    return redirect(tesla_auth_url)
+
+@app.route('/auth/tesla/callback')
+def tesla_callback():
+    # Retrieve authorization code from Tesla's callback
+    code = request.args.get('code')
+
+    # Exchange authorization code for access token
+    data = {
+        'grant_type': 'authorization_code',
+        'client_id': TESLA_CLIENT_ID,
+        'client_secret': TESLA_CLIENT_SECRET,
+        'code': code,
+        'redirect_uri': 'http://localhost:5000/auth/tesla/callback'
+    }
+    response = requests.post(TESLA_TOKEN_URL, data=data)
+    tokens = response.json()
+
+    # Save the access token in the session
+    session['tesla_access_token'] = tokens['access_token']
+
+    return redirect('/dashboard')
+
+@app.route('/dashboard')
+def dashboard():
+    # Example dashboard page after logging in with Tesla
+    if 'tesla_access_token' in session:
+        return f"<h1>Logged in with Tesla</h1><p>Access Token: {session['tesla_access_token']}</p>"
+    else:
+        return redirect('/auth/tesla')

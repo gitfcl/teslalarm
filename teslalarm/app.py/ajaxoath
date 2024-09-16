@@ -1,0 +1,26 @@
+@app.route('/auth/ajax')
+def login_with_ajax():
+    # Redirect user to Ajax's OAuth URL (adjust with correct Ajax endpoints)
+    ajax_auth_url = "https://api.ajax-systemet.com/oauth2/authorize?response_type=code&client_id=your_ajax_client_id&redirect_uri=http://localhost:5000/auth/ajax/callback"
+    return redirect(ajax_auth_url)
+
+@app.route('/auth/ajax/callback')
+def ajax_callback():
+    # Handle the OAuth callback for Ajax (adjust with Ajax's token endpoint)
+    code = request.args.get('code')
+
+    # Exchange code for access token
+    data = {
+        'grant_type': 'authorization_code',
+        'client_id': 'your_ajax_client_id',
+        'client_secret': 'your_ajax_client_secret',
+        'code': code,
+        'redirect_uri': 'http://localhost:5000/auth/ajax/callback'
+    }
+    response = requests.post('https://api.ajax-systemet.com/oauth2/token', data=data)
+    tokens = response.json()
+
+    # Save access token in session
+    session['ajax_access_token'] = tokens['access_token']
+
+    return redirect('/dashboard')

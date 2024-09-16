@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koppla Tesla och Ajax</title>
+</head>
+<body>
+    <h1>Välj fordon och Ajax-hub</h1>
+    <form action="/connect" method="POST">
+        <label for="vehicle">Välj ditt Tesla-fordon:</label>
+        <select name="vehicle_id">
+            <!-- Dynamiskt genererad lista med fordon från Tesla API -->
+            <option value="123456789">Tesla Model 3</option>
+        </select>
+        <br>
+
+        <label for="hub">Välj din Ajax-hub:</label>
+        <select name="hub_id">
+            <!-- Dynamiskt genererad lista med hubs från Ajax API -->
+            <option value="ajax_hub_1">Ajax Hub 1</option>
+        </select>
+        <br>
+        <button type="submit">Koppla</button>
+    </form>
+</body>
+</html>

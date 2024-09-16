@@ -1,0 +1,10 @@
+@app.route('/connect', methods=['POST'])
+def connect_vehicle_and_hub():
+    vehicle_id = request.form.get('vehicle_id')
+    hub_id = request.form.get('hub_id')
+
+    # Spara kopplingen i databasen (SQL, MongoDB, etc.)
+    user_id = session.get('user_id')
+    save_user_vehicle_and_hub(user_id, vehicle_id, hub_id)
+
+    return redirect('/dashboard')
